@@ -10,7 +10,7 @@ const URL = "https://peaceful-pothos-a35bae.netlify.app";
 /*
   Our serverless function handler
 */
-export function handler(event, context, callback) {
+exports.handler = async function (event, context, callback) {
 
   // get the arguments from the notification
   var body = JSON.parse(event.body);

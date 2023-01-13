@@ -13,6 +13,7 @@ const URL = "https://peaceful-pothos-a35bae.netlify.app";
 exports.handler = async function (event, context, callback) {
 
   // get the arguments from the notification
+  console.log(event.body)
   var body = JSON.parse(event.body);
 
   // prepare call to the Slack API

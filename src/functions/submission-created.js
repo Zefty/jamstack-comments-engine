@@ -27,10 +27,10 @@ exports.handler = async function (event, context, callback) {
       {
         "fallback": "New comment on the comment example site",
         "color": "#444",
-        "author_name": body.data.email,
-        "title": body.data.path,
-        "title_link": URL + body.data.path,
-        "text": body.data.comment
+        "author_name": body.payload.data.email,
+        "title": body.payload.data.path,
+        "title_link": URL + body.payload.data.path,
+        "text": body.payload.data.comment
       },
       {
         "fallback": "Manage comments on " + URL,
@@ -40,14 +40,14 @@ exports.handler = async function (event, context, callback) {
             "type": "button",
             "text": "Approve comment",
             "name": "approve",
-            "value": body.id
+            "value": body.payload.id
           },
           {
             "type": "button",
             "style": "danger",
             "text": "Delete comment",
             "name": "delete",
-            "value": body.id
+            "value": body.payload.id
           }
         ]
       }]

@@ -17,7 +17,7 @@ exports.handler = async function (event, context, callback) {
   var body = JSON.parse(event.body);
 
   // prepare call to the Slack API
-  var slackURL = process.env.SLACK_WEBHOOK_URL  // || "https://hooks.slack.com/services/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"
+  var slackURL = process.env.SLACK_WEBHOOK_URL || "https://hooks.slack.com/services/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"
 
   console.log(slackURL)
 
@@ -56,6 +56,8 @@ exports.handler = async function (event, context, callback) {
   console.log(slackPayload)
 
   // post the notification to Slack
+  console.log("Posting to Slack")
+
   request.post({ url: slackURL, json: slackPayload }, function (err, httpResponse, body) {
     var msg;
     if (err) {
@@ -63,11 +65,13 @@ exports.handler = async function (event, context, callback) {
     } else {
       msg = 'Post to Slack successful!  Server responded with:' + body;
     }
-    callback(null, {
-      statusCode: 200,
-      body: msg
-    })
-    return console.log(msg);
+    // callback(null, {
+    //   statusCode: 200,
+    //   body: msg
+    // })
+    console.log(msg);
   });
+
+  console.log("Done posting to Slack")
 
 }

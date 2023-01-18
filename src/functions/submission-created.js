@@ -1,6 +1,6 @@
 'use strict';
 
-var request = require("request");
+const fetch = require("node-fetch");
 
 // populate environment variables locally.
 require('dotenv').config()

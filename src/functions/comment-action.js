@@ -1,4 +1,5 @@
 var request = require("request");
+const axios = require('axios');
 
 // populate environment variables locally.
 require('dotenv').config();
@@ -7,7 +8,7 @@ const {
 } = process.env;
 
 // hardcoding this for a moment... TODO: replace request with somethign that follows redirects
-const URL = "https://peaceful-pothos-a35bae.netlify.app";
+const URL = "https://peaceful-pothos-a35bae.netlify.app/";
 
 /*
   delete this submission via the api
@@ -36,6 +37,12 @@ exports.handler = async function (event, context, callback) {
   var method = payload.actions[0].name;
   var id = payload.actions[0].value;
 
+  console.log(body)
+  console.log(payload)
+  console.log(method)
+  console.log(id)
+
+
   if (method == "delete") {
     purgeComment(id);
     callback(null, {
@@ -49,7 +56,7 @@ exports.handler = async function (event, context, callback) {
     console.log(url);
 
 
-    request(url, function (err, response, body) {
+    request(url, async function (err, response, body) {
       if (!err && response.statusCode === 200) {
         var data = JSON.parse(body).data;
 
@@ -68,25 +75,26 @@ exports.handler = async function (event, context, callback) {
         console.log(payload);
 
         // post the comment to the approved lost
-        request.post({ 'url': approvedURL, 'formData': payload }, function (err, httpResponse, body) {
-          var msg;
-          if (err) {
-            msg = 'Post to approved comments failed:' + err;
-            console.log(msg);
-          } else {
-            msg = 'Post to approved comments list successful.'
-            console.log(msg);
-            purgeComment(id);
+        await axios({ method: 'post', url: approvedURL, data: payload }).then(
+          function (response) {
+            console.log(response.status);
+            if (response.status == 200) {
+              msg = 'Post to approved comments list successful.'
+              console.log(msg);
+              purgeComment(id);
+            }
+            var msg = "Comment registered. Site deploying to include it.";
+            callback(null, {
+              statusCode: 200,
+              body: msg
+            }).catch(function (error) {
+              console.log(error)
+              msg = 'Post to approved comments failed:' + err;
+              console.log(msg);
+            })
           }
-          var msg = "Comment registered. Site deploying to include it.";
-          callback(null, {
-            statusCode: 200,
-            body: msg
-          })
-          return console.log(msg);
-        });
+        )
       }
     });
-
   }
 }

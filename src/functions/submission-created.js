@@ -1,6 +1,7 @@
 'use strict';
 
 var request = require("request");
+const { json } = require("stream/consumers");
 
 // populate environment variables locally.
 require('dotenv').config()
@@ -58,20 +59,39 @@ exports.handler = async function (event, context, callback) {
   // post the notification to Slack
   console.log("Posting to Slack")
 
-  request.post({ url: slackURL, json: slackPayload }, function (err, httpResponse, body) {
-    var msg;
-    if (err) {
-      msg = 'Post to Slack failed:' + err;
-    } else {
-      msg = 'Post to Slack successful!  Server responded with:' + body;
+  const response = await fetch(
+    slackURL,
+    {
+      method: 'POST',
+      headers: {
+        // Authorization: `Token ${EMAIL_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(slackPayload),
     }
-    // callback(null, {
-    //   statusCode: 200,
-    //   body: msg
-    // })
-    console.log(msg);
-  });
-
+  );
+  let responseText = await response.text();
+  console.log('response:', responseText);
   console.log("Done posting to Slack")
+  return {
+    statusCode: response.status,
+    body: responseText,
+  };
+
+  // request.post({ url: slackURL, body: JSON.stringify(slackPayload), headers: { 'content-type': 'application/json' } }, function (err, httpResponse, body) {
+  //   var msg;
+  //   if (err) {
+  //     msg = 'Post to Slack failed:' + err;
+  //   } else {
+  //     msg = 'Post to Slack successful!  Server responded with:' + body;
+  //   }
+  //   // callback(null, {
+  //   //   statusCode: 200,
+  //   //   body: msg
+  //   // })
+  //   console.log(msg);
+  // });
+
+  // console.log("Done posting to Slack")
 
 }

@@ -28,6 +28,7 @@ function purgeComment(id) {
   Handle the lambda invocation
 */
 exports.handler = async function (event, context, callback) {
+  console.log(event.body);
 
   // parse the payload
   var body = event.body.split("payload=")[1];
@@ -45,7 +46,7 @@ exports.handler = async function (event, context, callback) {
 
     // get the comment data from the queue
     var url = `https://api.netlify.com/api/v1/submissions/${id}?access_token=${NETLIFY_AUTH_TOKEN}`;
-
+    console.log(url);
 
 
     request(url, function (err, response, body) {

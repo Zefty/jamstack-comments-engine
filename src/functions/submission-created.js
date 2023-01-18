@@ -1,6 +1,6 @@
 'use strict';
 
-const fetch = require("node-fetch");
+const axios = require('axios');
 
 // populate environment variables locally.
 require('dotenv').config()
@@ -58,23 +58,22 @@ exports.handler = async function (event, context, callback) {
   // post the notification to Slack
   console.log("Posting to Slack")
 
-  const response = await fetch(
-    slackURL,
-    {
-      method: 'POST',
-      headers: {
-        // Authorization: `Token ${EMAIL_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(slackPayload),
-    }
-  );
-  let responseText = await response.text();
-  console.log('response:', responseText);
+  var resp;
+
+  await axios({
+    method: 'post',
+    url: slackURL,
+    data: JSON.stringify(slackPayload),
+  }).then(function (response) {
+    resp = response
+    console.log(response.status);
+  }).catch(function (error) {
+    console.log(error);
+  });
   console.log("Done posting to Slack")
   return {
-    statusCode: response.status,
-    body: responseText,
+    statusCode: resp.status,
+    body: resp.data,
   };
 
   // request.post({ url: slackURL, body: JSON.stringify(slackPayload), headers: { 'content-type': 'application/json' } }, function (err, httpResponse, body) {

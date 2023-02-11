@@ -55,19 +55,18 @@ exports.handler = async function (event, context, callback) {
     var url = `https://api.netlify.com/api/v1/submissions/${id}?access_token=${NETLIFY_AUTH_TOKEN}`;
     console.log(url);
 
-    await axios.get(url).then(function (response) {
+    await axios.get(url).then(async function (response) {
       console.log(response)
       if (response.status === 200) {
         console.log("response successful")
-        const data = response.data
         // now we have the data, let's massage it and post it to the approved form
         const payload = {
           'form-name': "approved-comments",
-          'path': data.path,
+          'path': response.data.path,
           'received': new Date().toString(),
-          'email': data.email,
-          'name': data.name,
-          'comment': data.comment
+          'email': response.data.email,
+          'name': response.data.name,
+          'comment': response.data.comment
         };
         const approvedURL = URL;
 
@@ -75,7 +74,7 @@ exports.handler = async function (event, context, callback) {
         console.log(payload);
 
         // post the comment to the approved lost
-        axios({ method: 'post', url: approvedURL, data: payload }).then(
+        await axios({ method: 'post', url: approvedURL, data: JSON.stringify(payload) }).then(
           function (response) {
             console.log(response.status);
             if (response.status == 200) {

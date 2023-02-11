@@ -55,13 +55,13 @@ exports.handler = async function (event, context, callback) {
     var url = `https://api.netlify.com/api/v1/submissions/${id}?access_token=${NETLIFY_AUTH_TOKEN}`;
     console.log(url);
 
-
-    request(url, async function (err, response, body) {
-      if (!err && response.statusCode === 200) {
-        var data = JSON.parse(body).data;
-
+    await axios.get(url).then(function (response) {
+      console.log(response)
+      if (response.status === 200) {
+        console.log("response successful")
+        const data = JSON.parse(response.data);
         // now we have the data, let's massage it and post it to the approved form
-        var payload = {
+        const payload = {
           'form-name': "approved-comments",
           'path': data.path,
           'received': new Date().toString(),
@@ -69,13 +69,13 @@ exports.handler = async function (event, context, callback) {
           'name': data.name,
           'comment': data.comment
         };
-        var approvedURL = URL;
+        const approvedURL = URL;
 
         console.log("Posting to", approvedURL);
         console.log(payload);
 
         // post the comment to the approved lost
-        await axios({ method: 'post', url: approvedURL, data: payload }).then(
+        axios({ method: 'post', url: approvedURL, data: payload }).then(
           function (response) {
             console.log(response.status);
             if (response.status == 200) {
@@ -94,7 +94,52 @@ exports.handler = async function (event, context, callback) {
             })
           }
         )
+
       }
-    });
+    })
+
+
+    // request(url, function (err, response, body) {
+    //   if (!err && response.statusCode === 200) {
+    //     console.log("response successful")
+    //     var data = JSON.parse(body).data;
+
+    //     // now we have the data, let's massage it and post it to the approved form
+    //     var payload = {
+    //       'form-name': "approved-comments",
+    //       'path': data.path,
+    //       'received': new Date().toString(),
+    //       'email': data.email,
+    //       'name': data.name,
+    //       'comment': data.comment
+    //     };
+    //     var approvedURL = URL;
+
+    //     console.log("Posting to", approvedURL);
+    //     console.log(payload);
+
+    //     // post the comment to the approved lost
+    //     axios({ method: 'post', url: approvedURL, data: payload }).then(
+    //       function (response) {
+    //         console.log(response.status);
+    //         if (response.status == 200) {
+    //           msg = 'Post to approved comments list successful.'
+    //           console.log(msg);
+    //           purgeComment(id);
+    //         }
+    //         var msg = "Comment registered. Site deploying to include it.";
+    //         callback(null, {
+    //           statusCode: 200,
+    //           body: msg
+    //         }).catch(function (error) {
+    //           console.log(error)
+    //           msg = 'Post to approved comments failed:' + err;
+    //           console.log(msg);
+    //         })
+    //       }
+    //     )
+    //   }
+    // });
+
   }
 }

@@ -71,7 +71,7 @@ exports.handler = async function (event, context, callback) {
         formData.append("received", new Date().toString());
         formData.append("email", "jaime.wu011@gmail.com");
         formData.append("name", "jaime");
-        formData.append("comment", "dfsgjkg");
+        formData.append("comment", "wow this works really well!");
         const approvedURL = URL;
 
         console.log("Posting to", approvedURL);

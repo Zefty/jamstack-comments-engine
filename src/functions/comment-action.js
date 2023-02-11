@@ -59,7 +59,7 @@ exports.handler = async function (event, context, callback) {
       console.log(response)
       if (response.status === 200) {
         console.log("response successful")
-        const data = JSON.parse(response.data);
+        const data = response.data
         // now we have the data, let's massage it and post it to the approved form
         const payload = {
           'form-name': "approved-comments",

@@ -60,21 +60,25 @@ exports.handler = async function (event, context, callback) {
       if (response.status === 200) {
         console.log("response successful")
         // now we have the data, let's massage it and post it to the approved form
-        const payload = {
-          'form-name': "approved-comments",
-          'path': response.data.path,
-          'received': new Date().toString(),
-          'email': response.data.email,
-          'name': response.data.name,
-          'comment': response.data.comment
-        };
+
+        const formData = new FormData();
+        formData.append("form-name", "approved-comments");
+        formData.append("path", response.data.path);
+        formData.append("received", "new Date().toString()");
+        formData.append("email", "response.data.email");
+        formData.append("name", "response.data.name");
+        formData.append("comment", "response.data.comment");
         const approvedURL = URL;
 
         console.log("Posting to", approvedURL);
-        console.log(payload);
+        console.log(formData);
 
         // post the comment to the approved lost
-        await axios({ method: 'post', url: approvedURL, data: JSON.stringify(payload) }).then(
+        await axios({
+          method: 'post', url: approvedURL, data: formData, headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }).then(
           function (response) {
             console.log(response.status);
             if (response.status == 200) {

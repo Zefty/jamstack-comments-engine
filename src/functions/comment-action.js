@@ -62,9 +62,12 @@ exports.handler = async function (event, context, callback) {
         console.log("response successful")
         // now we have the data, let's massage it and post it to the approved form
 
+        console.log(response.data)
+        console.log(response.data.data)
+
         const formData = new FormData();
         formData.append("form-name", "approved-comments");
-        formData.append("path", response.data.path);
+        formData.append("path", response.data.data.path);
         formData.append("received", new Date().toString());
         formData.append("email", "jaime.wu011@gmail.com");
         formData.append("name", "jaime");
